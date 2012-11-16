@@ -1,19 +1,21 @@
 #!/bin/bash
 
+BASENAME_PREFIX="troubleshoot-helper"
+GIT_IGNORE="$HOME/.gitignore"
+
 hash=$(git log -n 1 --format=format:%h)
-basename="troubleshoot-helper-$hash"
+basename="$BASENAME_PREFIX-$hash"
 if git status --short | awk '{ print $1 }' | fgrep -qv '??'; then
   basename="$basename-modified"
 fi
 filename="$basename.xpi"
 echo $filename
 
-gitignore="$HOME/.gitignore"
 exclude=""
-if [ -f "$gitignore" ]; then
-  exclude="-x@$gitignore"
+if [ -f "$GIT_IGNORE" ]; then
+  exclude="-x@$GIT_IGNORE"
 fi
-cd content
+cd src
 zip -r "../$filename" . $exclude
 cd ..
 
