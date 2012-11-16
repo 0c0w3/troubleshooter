@@ -49,12 +49,12 @@ const whitelistedDOMAPI = {
    * @param desc    The property's descriptor.
    */
   defineProperty: function defineProperty(origin, name, desc) {
-    this._log.debug("whitelistedDOMAPI register");
+    this._log.debug("whitelistedDOMAPI defineProperty origin=" + origin);
     this._propertyMap[origin] = { name: name, desc: desc };
   },
 
   observe: function observe(window, topic, origin) {
-    this._log.debug("observe origin=" + origin);
+    this._log.debug("whitelistedDOMAPI observe origin=" + origin);
     let nameDesc = this._propertyMap[origin] || this._propertyMap["*"];
     if (!nameDesc)
       return;

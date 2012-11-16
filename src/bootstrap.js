@@ -32,7 +32,7 @@ function startup(data, reason) {
     if (!isNaN(level))
       log.level = level;
   }
-  log.debug("bootstrap.js startup, reason=" + reason);
+  log.debug("bootstrap.js startup reason=" + reason);
 
   // Every property of every object passed from chrome to content has to be
   // explicitly exposed via __exposedProps__ for content to see it.  That means
@@ -61,7 +61,7 @@ function startup(data, reason) {
 }
 
 function shutdown(data, reason) {
-  log.debug("bootstrap.js shutdown, reason=" + reason);
+  log.debug("bootstrap.js shutdown reason=" + reason);
   whitelistedDOMAPI.shutdown();
 }
 
