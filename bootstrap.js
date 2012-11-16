@@ -34,16 +34,29 @@ function startup(data, reason) {
   }
   log.debug("bootstrap.js startup, reason=" + reason);
 
-  let troubleshootWrapper = { __exposedProps__: {} };
-  for (let prop in Troubleshoot) {
-    log.debug("adding property to Troubleshoot wrapper: " + prop);
-    troubleshootWrapper[prop] = Troubleshoot[prop];
-    troubleshootWrapper.__exposedProps__[prop] = "r";
-  }
+  // Every property of every object passed from chrome to content has to be
+  // explicitly exposed via __exposedProps__ for content to see it.  That means
+  // the simple object passed to snapshot's callback.  That means all the nested
+  // properties of that object that are themselves objects.
+  //
+  // Rather than try to perfectly reflect Troubleshoot's API to content and risk
+  // running into crappy wrapper bugs, pass JSON to the snapshot caller; strings
+  // don't need __exposedProps__.  If Troubleshoot grows more complex, it may be
+  // worth writing IDL for it, which would remove the need for wrapping here.
+  let troubleshootWrapper = {
+    __exposedProps__: {},
+    snapshotJSON: function snapshotJSON(done) {
+      Troubleshoot.snapshot(function onSnap(data) done(JSON.stringify(data)));
+    },
+  };
+  for (let prop in troubleshootWrapper)
+    if (prop[0] != "_")
+      troubleshootWrapper.__exposedProps__[prop] = "r";
+
   let desc = { value: troubleshootWrapper };
   whitelistedDOMAPI.startup(log);
   WhitelistedOrigins.forEach(function (origin) {
-    whitelistedDOMAPI.defineProperty(origin, "mozTroubleshoot", desc);
+    whitelistedDOMAPI.defineProperty(origin, TroubleshootPropertyName, desc);
   });
 }
 

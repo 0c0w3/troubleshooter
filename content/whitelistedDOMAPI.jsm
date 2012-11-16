@@ -53,7 +53,6 @@ const whitelistedDOMAPI = {
     this._propertyMap[origin] = { name: name, desc: desc };
   },
 
-  // private!
   observe: function observe(window, topic, origin) {
     this._log.debug("observe origin=" + origin);
     let nameDesc = this._propertyMap[origin] || this._propertyMap["*"];
