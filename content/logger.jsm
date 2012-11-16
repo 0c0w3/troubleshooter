@@ -6,11 +6,11 @@ const EXPORTED_SYMBOLS = [
   "logger",
 ];
 
-const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
-
 const logger = {
   Logger: Logger,
 };
+
+const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
 
 function Logger(name, writer, logLineFormatter, objectFormatter) {
   this.name = name;

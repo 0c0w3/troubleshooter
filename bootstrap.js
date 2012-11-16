@@ -2,168 +2,56 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const { interfaces: Ci, classes: Cc, results: Cr, utils: Cu } = Components;
+const TroubleshootPropertyName = "mozTroubleshoot";
 
+const WhitelistedOrigins = [
+  "http://support.mozilla.org",
+  "https://support.mozilla.org",
+  "http://input.mozilla.org",
+  "https://input.mozilla.org",
+  "http://www.mozilla.org",
+  "https://www.mozilla.org",
+];
+
+const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
+Cu.import("resource://gre/modules/Troubleshoot.jsm");
 
 var log;
 
-// let main = {};
-
-// function startup(data, reason) {
-// //   let logger = {};
-// //   Cu.import("chrome://troubleshooting-data-helper/content/logger.jsm", logger);
-// //   log = new logger.Logger("troubleshooting-data-helper");
-// //   log.level = logger.Logger.level.DEBUG;
-// //   log.debug("bootstrap startup");
-
-//   Cu.import("chrome://troubleshooting-data-helper/content/main.jsm", main);
-//   main.start();
-// }
-
-
-// Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-// function Troubleshoot() {
-// }
-// Troubleshoot.prototype = {
-//   init: function init(window) {
-//     dump("******************************************************* init\n");
-// //     return { foo: "foo!" };
-//     Cu.import("resource://gre/modules/Services.jsm");
-//     return {
-//       snapshot: function (cb) {
-//         Services.tm.mainThread.dispatch(cb.bind(null, "hey!"),
-//                                         Ci.nsIThread.DISPATCH_NORMAL);
-//       },
-//     };
-//   },
-//   classID: Components.ID("{0ddbb0a6-9f1e-4c69-b8c3-8e57ed2679cf}"),
-//   QueryInterface: XPCOMUtils.generateQI([
-//     Ci.nsIDOMGlobalPropertyInitializer,
-//     Ci.nsISupports,
-//   ]),
-// };
-// let Factory = {
-//   createInstance: function (outer, iid) {
-//     if (outer != null)
-//       throw Cr.NS_ERROR_NO_AGGREGATION;
-//     return new Troubleshoot();
-//   }
-// };
-
-// Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-// function DOMAPIInitializer() {
-// }
-// DOMAPIInitializer.prototype = {
-//   init: function init(window) {
-//     dump("*********** init\n");
-//     log.debug("DOMAPIInitializer init");
-//     Cu.import("resource://gre/modules/Services.jsm");
-//     return {
-//       snapshot: function (cb) {
-//         Services.tm.mainThread.dispatch(cb.bind(null, "hey!"),
-//                                         Ci.nsIThread.DISPATCH_NORMAL);
-//       },
-//     };
-//   },
-//   classID: Components.ID("{0ddbb0a6-9f1e-4c69-b8c3-8e57ed2679cf}"),
-//   QueryInterface: XPCOMUtils.generateQI([
-//     Ci.nsIDOMGlobalPropertyInitializer,
-//     Ci.nsISupports,
-//   ]),
-// };
-// const DOMAPIInitializerFactory = {
-//   createInstance: function createInstance(outer, iid) {
-//     dump("*********** createInstance\n");
-//     if (outer)
-//       throw Cr.NS_ERROR_NO_AGGREGATION;
-//     return new DOMAPIInitializer();
-//   }
-// };
-
-// function startup(data, reason) {
-//   Cu.import("chrome://troubleshooting-data-helper/content/logger.jsm");
-//   log = new logger.Logger("troubleshooting-data-helper");
-//   log.level = logger.Logger.level.DEBUG;
-//   log.debug("bootstrap startup");
-// //   Components.manager.QueryInterface(Ci.nsIComponentRegistrar).
-// //     registerFactory(Troubleshoot.prototype.classID, "TroubleshootDOMAPIXXX",
-// //                     "@mozilla.org/troubleshooting-dom-api;1", Factory);
-//   Components.manager.QueryInterface(Ci.nsIComponentRegistrar).
-//     registerFactory(DOMAPIInitializer.prototype.classID, "TroubleshootDOMAPIInitializer",
-//                     "@mozilla.org/troubleshooting-dom-api;1", DOMAPIInitializerFactory);
-//   Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager).
-//     addCategoryEntry("JavaScript-global-property", "mozTroubleshoot", "@mozilla.org/troubleshooting-dom-api;1", false, true);
-// }
-
-
-// function shutdown(data, reason) {
-//   log.debug("bootstrap shutdown");
-//   log = null;
-
-// //   main.shutdown();
-// //   main = null;
-// }
-
-
-
-// Cu.import("chrome://troubleshooting-data-helper/content/logger.jsm");
-// Cu.import("chrome://troubleshooting-data-helper/content/domAPI.jsm");
-
-
-
-// Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-// function DOMAPIInitializer() {
-// }
-// DOMAPIInitializer.prototype = {
-//   init: function init(window) {
-//     dump("*********** init\n");
-//     log.debug("DOMAPIInitializer init");
-//     Cu.import("resource://gre/modules/Services.jsm");
-//     return {
-//       snapshot: function (cb) {
-//         Services.tm.mainThread.dispatch(cb.bind(null, "hey!"),
-//                                         Ci.nsIThread.DISPATCH_NORMAL);
-//       },
-//     };
-//   },
-//   classID: Components.ID("{0ddbb0a6-9f1e-4c69-b8c3-8e57ed2679cf}"),
-//   QueryInterface: XPCOMUtils.generateQI([
-//     Ci.nsIDOMGlobalPropertyInitializer,
-//     Ci.nsISupports,
-//   ]),
-// };
-// const DOMAPIInitializerFactory = {
-//   createInstance: function createInstance(outer, iid) {
-//     dump("*********** createInstance\n");
-//     if (outer)
-//       throw Cr.NS_ERROR_NO_AGGREGATION;
-//     return new DOMAPIInitializer();
-//   }
-// };
-
-
 function startup(data, reason) {
   Cu.import("chrome://troubleshooting-data-helper/content/logger.jsm");
-  Cu.import("chrome://troubleshooting-data-helper/content/domAPI.jsm");
+  Cu.import("chrome://troubleshooting-data-helper/content/" +
+            "whitelistedDOMAPI.jsm");
+
   log = new logger.Logger("troubleshooting-data-helper");
-  log.level = logger.Logger.level.DEBUG;//XXX check env var instead
+  let logLevelStr = Cc["@mozilla.org/process/environment;1"].
+                    getService(Ci.nsIEnvironment).
+                    get("MOZ_TROUBLESHOOT_HELPER_LOG_LEVEL");
+  if (logLevelStr) {
+    let level = Number(logLevelStr);
+    if (!isNaN(level))
+      log.level = level;
+  }
   log.debug("bootstrap.js startup, reason=" + reason);
-  domAPI.startup(log);
+
+  let troubleshootWrapper = { __exposedProps__: {} };
+  for (let prop in Troubleshoot) {
+    log.debug("adding property to Troubleshoot wrapper: " + prop);
+    troubleshootWrapper[prop] = Troubleshoot[prop];
+    troubleshootWrapper.__exposedProps__[prop] = "r";
+  }
+  let desc = { value: troubleshootWrapper };
+  whitelistedDOMAPI.startup(log);
+  WhitelistedOrigins.forEach(function (origin) {
+    whitelistedDOMAPI.defineProperty(origin, "mozTroubleshoot", desc);
+  });
 }
 
 function shutdown(data, reason) {
   log.debug("bootstrap.js shutdown, reason=" + reason);
-  domAPI.shutdown();
+  whitelistedDOMAPI.shutdown();
 }
 
-
-
-
-
-// function install(data, reason) {
-//   dump("bootstrap install\n");
-// }
-
-// function uninstall(data, reason) {
-//   dump("bootstrap uninstall\n");
-// }
+// Whatever it is that loads us warns if install isn't defined.
+function install(data, reason) {}
+function uninstall(data, reason) {}
