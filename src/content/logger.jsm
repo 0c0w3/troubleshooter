@@ -108,7 +108,9 @@ Logger.prototype = {
   },
 
   _formatObject: function _formatObject(obj) {
-    if (typeof(obj) == "object") {
+    if (Array.isArray(obj))
+      return "[" + obj.map(this._formatObject.bind(this)).join(", ") + "]";
+    if (obj && typeof(obj) == "object") {
       let global = Components.utils.getGlobalForObject(obj);
       if (global.Error &&
           obj instanceof global.Error &&
