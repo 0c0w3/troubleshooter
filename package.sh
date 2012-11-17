@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASENAME_PREFIX="troubleshoot-helper"
+BASENAME_PREFIX="troubleshooter"
 GIT_IGNORE="$HOME/.gitignore"
 
 hash=$(git log -n 1 --format=format:%h)
