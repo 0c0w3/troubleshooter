@@ -113,14 +113,16 @@ function allContentWindows() {
                  getService(Ci.nsIWindowMediator).
                  getEnumerator("navigator:browser");
   while (browsers.hasMoreElements()) {
-    let contentWins = browsers.getNext().
-                      QueryInterface(Ci.nsIInterfaceRequestor).
-                      getInterface(Ci.nsIDocShell).
-                      getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeContent,
-                                            Ci.nsIDocShell.ENUMERATE_FORWARDS);
-    while (contentWins.hasMoreElements())
-      yield contentWins.getNext().
-            QueryInterface(Ci.nsIInterfaceRequestor).
-            getInterface(Ci.nsIDOMWindow);
+    let browserBrowsers = browsers.getNext().gBrowser.browsers;
+    for (let i = 0; i < browserBrowsers.length; i++) {
+      let contentWins =
+        browserBrowsers[i].docShell.
+        getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeContent,
+                              Ci.nsIDocShell.ENUMERATE_FORWARDS);
+      while (contentWins.hasMoreElements())
+        yield contentWins.getNext().
+              QueryInterface(Ci.nsIInterfaceRequestor).
+              getInterface(Ci.nsIDOMWindow);
+    }
   }
 }

@@ -46,6 +46,7 @@ function startup(data, reason) {
   catch (err) {
     // Troubleshoot.jsm didn't appear until Firefox 18.  Include a copy in the
     // add-on so people on earlier versions can use it.
+    log.debug("falling back to bundled Troubleshoot.jsm");
     Cu.import("chrome://troubleshoot-helper/content/Troubleshoot.jsm");
   }
 

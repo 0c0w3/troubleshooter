@@ -26,15 +26,19 @@ domain + optional port string, like "http://www.mozilla.org" and
 "http://www.mozilla.org:99".  Use "*" to bless all domains.  To bless multiple
 domains, put them in a space-delimited string.
 
+Firefox 10 is the oldest supported Firefox.  Some troubleshooting data is
+unavailable on versions older than 18.
+
 
 Technical Notes
 ---------------
 
 The `mozTroubleshoot` API is backed by the [Troubleshoot.jsm][troubleshoot-jsm]
 API introduced in Firefox 18.  The add-on includes a copy of that module so that
-users running older versions can use the add-on, too.  The copy was pulled from
-[mozilla-central revision f3f379beb585][troubleshoot-jsm-rev] and was modified
-to remove its preprocessing directives.
+users running older versions can use the add-on, too, although some data will be
+unavailable.  The copy was pulled from [mozilla-central revision
+f3f379beb585][troubleshoot-jsm-rev] and was modified to remove its preprocessing
+directives.
 
 [troubleshoot-jsm]: http://mxr.mozilla.org/mozilla-central/source/toolkit/content/Troubleshoot.jsm
 [troubleshoot-jsm-rev]: http://hg.mozilla.org/mozilla-central/file/f3f379beb585/toolkit/content/Troubleshoot.jsm
