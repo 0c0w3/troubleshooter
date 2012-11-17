@@ -2,9 +2,9 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
-    <em:id>troubleshoot-helper@mozilla.org</em:id>
+    <em:id>troubleshooter@mozilla.org</em:id>
     <em:version>1.0a</em:version>
-    <em:name>Troubleshoot Helper</em:name>
+    <em:name>Troubleshooter</em:name>
     <em:description>
       Provides Firefox troubleshooting data to Mozilla web sites.
     </em:description>

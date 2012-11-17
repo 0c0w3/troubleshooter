@@ -18,14 +18,14 @@ const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
 var log;
 
 function startup(data, reason) {
-  Cu.import("chrome://troubleshoot-helper/content/logger.jsm");
-  Cu.import("chrome://troubleshoot-helper/content/whitelistedDOMAPI.jsm");
+  Cu.import("chrome://troubleshooter/content/logger.jsm");
+  Cu.import("chrome://troubleshooter/content/whitelistedDOMAPI.jsm");
 
   let env = Cc["@mozilla.org/process/environment;1"].
             getService(Ci.nsIEnvironment);
 
-  log = new logger.Logger("troubleshoot-helper");
-  let logLevelStr = env.get("TROUBLESHOOT_HELPER_LOG_LEVEL");
+  log = new logger.Logger("troubleshooter");
+  let logLevelStr = env.get("TROUBLESHOOTER_LOG_LEVEL");
   if (logLevelStr) {
     let level = Number(logLevelStr);
     if (!isNaN(level))
@@ -35,7 +35,7 @@ function startup(data, reason) {
   log.debug("log level is " + log.level);
 
   let origins = WhitelistedOrigins.slice();
-  let originStr = env.get("TROUBLESHOOT_HELPER_ORIGIN");
+  let originStr = env.get("TROUBLESHOOTER_ORIGIN");
   if (originStr)
     origins.unshift.apply(origins, originStr.split(/\s+/));
   log.debug("whitelisted origins:", origins);
@@ -47,7 +47,7 @@ function startup(data, reason) {
     // Troubleshoot.jsm didn't appear until Firefox 18.  Include a copy in the
     // add-on so people on earlier versions can use it.
     log.debug("falling back to bundled Troubleshoot.jsm");
-    Cu.import("chrome://troubleshoot-helper/content/Troubleshoot.jsm");
+    Cu.import("chrome://troubleshooter/content/Troubleshoot.jsm");
   }
 
   // Every property of every object passed from chrome to content has to be

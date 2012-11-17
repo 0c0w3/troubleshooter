@@ -1,7 +1,7 @@
-Troubleshoot Helper
-===================
+Troubleshooter
+==============
 
-Troubleshoot Helper is a restartless Firefox add-on that provides a simple
+Troubleshooter is a restartless Firefox add-on that provides a simple Firefox
 troubleshooting API to Mozilla web sites.  Here's the entire API:
 
     window.mozTroubleshoot.snapshotJSON(function (json) {
@@ -21,8 +21,8 @@ All pages on the following domains are blessed with `mozTroubleshoot`:
   * input.mozilla.org
 
 You can bless other domains with the environment variable
-`TROUBLESHOOT_HELPER_ORIGIN`.  Set it to an origin, which is just a scheme +
-domain + optional port string, like "http://www.mozilla.org" and
+`TROUBLESHOOTER_ORIGIN`.  Set it to an origin, which is just a scheme + domain +
+optional port string, like "http://www.mozilla.org" and
 "http://www.mozilla.org:99".  Use "*" to bless all domains.  To bless multiple
 domains, put them in a space-delimited string.
 
@@ -45,7 +45,6 @@ directives.
 
 The add-on logs to the terminal (via `dump`) and Firefox's error console (via
 `nsIConsoleService`).  By default only errors are logged, but you can make the
-log more verbose by setting the environment variable
-`TROUBLESHOOT_HELPER_LOG_LEVEL` to an integer indicating the desired log level.
-0 is the debug log level and logs everything.  See src/content/logger.jsm for
-details.
+log more verbose by setting the environment variable `TROUBLESHOOTER_LOG_LEVEL`
+to an integer indicating the desired log level.  0 is the debug log level and
+logs everything.  See src/content/logger.jsm for details.
