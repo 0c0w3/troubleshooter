@@ -21,19 +21,27 @@ function startup(data, reason) {
   Cu.import("chrome://troubleshoot-helper/content/logger.jsm");
   Cu.import("chrome://troubleshoot-helper/content/whitelistedDOMAPI.jsm");
 
+  let env = Cc["@mozilla.org/process/environment;1"].
+            getService(Ci.nsIEnvironment);
+
   log = new logger.Logger("troubleshoot-helper");
-  let logLevelStr = Cc["@mozilla.org/process/environment;1"].
-                    getService(Ci.nsIEnvironment).
-                    get("MOZ_TROUBLESHOOT_HELPER_LOG_LEVEL");
+  let logLevelStr = env.get("TROUBLESHOOT_HELPER_LOG_LEVEL");
   if (logLevelStr) {
     let level = Number(logLevelStr);
     if (!isNaN(level))
       log.level = level;
   }
   log.debug("bootstrap.js startup reason=" + reason);
+  log.debug("log level is " + log.level);
+
+  let origins = WhitelistedOrigins.slice();
+  let originStr = env.get("TROUBLESHOOT_HELPER_ORIGIN");
+  if (originStr)
+    origins.unshift.apply(origins, originStr.split(/\s+/));
+  log.debug("whitelisted origins:", origins);
 
   try {
-    Cu.import("resource://gre/modules/Troubleshoot.jsmXXX");
+    Cu.import("resource://gre/modules/Troubleshoot.jsm");
   }
   catch (err) {
     // Troubleshoot.jsm didn't appear until Firefox 18.  Include a copy in the
@@ -61,7 +69,7 @@ function startup(data, reason) {
       troubleshootWrapper.__exposedProps__[prop] = "r";
 
   whitelistedDOMAPI.startup(log);
-  whitelistedDOMAPI.defineProperty(WhitelistedOrigins, TroubleshootPropertyName,
+  whitelistedDOMAPI.defineProperty(origins, TroubleshootPropertyName,
                                    { value: troubleshootWrapper });
 }
 
