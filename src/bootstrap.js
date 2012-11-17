@@ -14,16 +14,14 @@ const WhitelistedOrigins = [
 ];
 
 const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
-Cu.import("resource://gre/modules/Troubleshoot.jsm");
 
 var log;
 
 function startup(data, reason) {
-  Cu.import("chrome://troubleshooting-data-helper/content/logger.jsm");
-  Cu.import("chrome://troubleshooting-data-helper/content/" +
-            "whitelistedDOMAPI.jsm");
+  Cu.import("chrome://troubleshoot-helper/content/logger.jsm");
+  Cu.import("chrome://troubleshoot-helper/content/whitelistedDOMAPI.jsm");
 
-  log = new logger.Logger("troubleshooting-data-helper");
+  log = new logger.Logger("troubleshoot-helper");
   let logLevelStr = Cc["@mozilla.org/process/environment;1"].
                     getService(Ci.nsIEnvironment).
                     get("MOZ_TROUBLESHOOT_HELPER_LOG_LEVEL");
@@ -33,6 +31,15 @@ function startup(data, reason) {
       log.level = level;
   }
   log.debug("bootstrap.js startup reason=" + reason);
+
+  try {
+    Cu.import("resource://gre/modules/Troubleshoot.jsmXXX");
+  }
+  catch (err) {
+    // Troubleshoot.jsm didn't appear until Firefox 18.  Include a copy in the
+    // add-on so people on earlier versions can use it.
+    Cu.import("chrome://troubleshoot-helper/content/Troubleshoot.jsm");
+  }
 
   // Every property of every object passed from chrome to content has to be
   // explicitly exposed via __exposedProps__ for content to see it.  That means
@@ -53,11 +60,9 @@ function startup(data, reason) {
     if (prop[0] != "_")
       troubleshootWrapper.__exposedProps__[prop] = "r";
 
-  let desc = { value: troubleshootWrapper };
   whitelistedDOMAPI.startup(log);
-  WhitelistedOrigins.forEach(function (origin) {
-    whitelistedDOMAPI.defineProperty(origin, TroubleshootPropertyName, desc);
-  });
+  whitelistedDOMAPI.defineProperty(WhitelistedOrigins, TroubleshootPropertyName,
+                                   { value: troubleshootWrapper });
 }
 
 function shutdown(data, reason) {
