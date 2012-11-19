@@ -27,7 +27,9 @@ optional port string, like "http://www.mozilla.org" and
 domains, put them in a space-delimited string.
 
 Firefox 10 is the oldest supported Firefox.  Some troubleshooting data is
-unavailable on versions older than 18.
+unavailable on versions older than 18.  When particular data is unavailable, the
+value of the relevant property in the JSON-encoded object will likely be an
+error message.
 
 
 Technical Notes
@@ -35,7 +37,7 @@ Technical Notes
 
 The `mozTroubleshoot` API is backed by the [Troubleshoot.jsm][troubleshoot-jsm]
 API introduced in Firefox 18.  The add-on includes a copy of that module so that
-users running older versions can use the add-on, too, although some data will be
+users running older versions can use it, too, although some data will be
 unavailable.  The copy was pulled from [mozilla-central revision
 f3f379beb585][troubleshoot-jsm-rev] and was modified to remove its preprocessing
 directives.
