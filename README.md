@@ -9,8 +9,9 @@ troubleshooting API to Mozilla web sites.  Here's the entire API:
     });
 
 `json` contains various data describing the user's Firefox including its
-version, modified preferences, installed add-ons, and more.  Its schema is
-defined by the `SNAPSHOT_SCHEMA` object [here][snapshot-schema].
+version, modified preferences, installed add-ons, and more; it's the same data
+listed on Firefox's about:support page.  Its schema is defined by the
+`SNAPSHOT_SCHEMA` object [here][snapshot-schema].
 
 [snapshot-schema]: http://mxr.mozilla.org/mozilla-central/source/toolkit/content/tests/browser/browser_Troubleshoot.js#73
 
