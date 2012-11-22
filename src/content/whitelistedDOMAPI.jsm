@@ -95,34 +95,28 @@ function originFromWindow(win) {
   let doc = win.document;
   if (!doc)
     return null;
-  let uriSpec = doc.documentURI;
   try {
-    let uri = Cc["@mozilla.org/network/io-service;1"].
-              getService(Ci.nsIIOService).
-              newURI(uriSpec, null, null);
-    return uri.scheme + "://" + uri.hostPort;
+    return doc.documentURIObject.prePath;
   }
   catch (err) {
-    log.debug("originFromWindow failed, uri=" + (uriSpec || "(none)"), err);
+    log.debug("originFromWindow failed, uri=" + (doc.documentURI || "(none)"), err);
   }
   return null;
 }
 
 function allContentWindows() {
-  let browsers = Cc["@mozilla.org/appshell/window-mediator;1"].
+  let browserWindows = Cc["@mozilla.org/appshell/window-mediator;1"].
                  getService(Ci.nsIWindowMediator).
                  getEnumerator("navigator:browser");
-  while (browsers.hasMoreElements()) {
-    let browserBrowsers = browsers.getNext().gBrowser.browsers;
-    for (let i = 0; i < browserBrowsers.length; i++) {
-      let contentWins =
-        browserBrowsers[i].docShell.
-        getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeContent,
-                              Ci.nsIDocShell.ENUMERATE_FORWARDS);
-      while (contentWins.hasMoreElements())
-        yield contentWins.getNext().
-              QueryInterface(Ci.nsIInterfaceRequestor).
-              getInterface(Ci.nsIDOMWindow);
+  while (browserWindows.hasMoreElements()) {
+    let windowDocShell = browserWindows.getNext().getInterface(Ci.nsIDocShell);
+    let contentWins =
+      windowDocShell.getDocShellEnumerator(Ci.nsIDocShellTreeItem.typeContent,
+                                           Ci.nsIDocShell.ENUMERATE_FORWARDS);
+    while (contentWins.hasMoreElements()) {
+      yield contentWins.getNext().
+            QueryInterface(Ci.nsIInterfaceRequestor).
+            getInterface(Ci.nsIDOMWindow);
     }
   }
 }
