@@ -95,15 +95,12 @@ function originFromWindow(win) {
   let doc = win.document;
   if (!doc)
     return null;
-  let uriSpec = doc.documentURI;
   try {
-    let uri = Cc["@mozilla.org/network/io-service;1"].
-              getService(Ci.nsIIOService).
-              newURI(uriSpec, null, null);
-    return uri.scheme + "://" + uri.hostPort;
+    return doc.documentURIObject.prePath;
   }
   catch (err) {
-    log.debug("originFromWindow failed, uri=" + (uriSpec || "(none)"), err);
+    log.debug("originFromWindow failed, uri=" + (doc.documentURI || "(none)"),
+              err);
   }
   return null;
 }

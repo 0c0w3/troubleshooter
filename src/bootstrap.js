@@ -5,12 +5,7 @@
 const TroubleshootPropertyName = "mozTroubleshoot";
 
 const WhitelistedOrigins = [
-  "http://support.mozilla.org",
   "https://support.mozilla.org",
-  "http://input.mozilla.org",
-  "https://input.mozilla.org",
-  "http://www.mozilla.org",
-  "https://www.mozilla.org",
 ];
 
 const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
