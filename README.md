@@ -17,13 +17,11 @@ listed on Firefox's about:support page.  Its schema is defined by the
 
 All pages on the following domains are blessed with `mozTroubleshoot`:
 
-  * www.mozilla.org
-  * support.mozilla.org
-  * input.mozilla.org
+  * support.mozilla.org (https only)
 
-You can bless other domains with the environment variable
+You can bless other domains *ad hoc* with the environment variable
 `TROUBLESHOOTER_ORIGIN`.  Set it to an origin, which is just a scheme + domain +
-optional port string, like "http://www.mozilla.org" and
+optional port string, like "https://www.mozilla.org" and
 "http://www.mozilla.org:99".  Use "*" to bless all domains.  To bless multiple
 domains, put them in a space-delimited string.
 
