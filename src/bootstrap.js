@@ -65,6 +65,15 @@ function startup(data, reason) {
       troubleshootWrapper.__exposedProps__[prop] = "r";
 
   whitelistedDOMAPI.startup(log);
+  whitelistedDOMAPI.on("didDefineProperty", function (eventName, details) {
+    // This conditional isn't actually necessary, because when it's false it
+    // seems the event doesn't reach the page anyway.  But that's the desired
+    // behavior, and the conditional codifies it.
+    if (details.window.document.readyState != "loading")
+      details.window.dispatchEvent(
+        new details.window.CustomEvent(
+          TroubleshootPropertyName + "DidBecomeAvailable"));
+  });
   whitelistedDOMAPI.defineProperty(origins, TroubleshootPropertyName,
                                    { value: troubleshootWrapper });
 }
